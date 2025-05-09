@@ -1,9 +1,9 @@
 'use client'
 
-import Image from "next/image";
+import Link from 'next/link'
 import { useEffect, useState } from 'react';
 
-const API = process.env.NEXT_PUBLIC_API
+import req from './utils.js'
 
 export default function Home() {
 
@@ -12,7 +12,7 @@ export default function Home() {
 
   // Fetch books on component mount
   useEffect(() => {
-    fetch(`${API}/books`)
+    req.get('books')
       .then(res => res.json())
       .then(data => setBooks(data))
       .catch(err => console.error("Error fetching books:", err));
@@ -26,11 +26,11 @@ export default function Home() {
   // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
-    fetch(`${API}/books`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(form)
-    })
+
+
+    const token = localStorage.getItem('token')
+
+    req.post('books', JSON.stringify(form))
     .then(res => res.json())
     .then(newBook => {
       setBooks([...books, newBook]);
@@ -66,6 +66,7 @@ export default function Home() {
         />
         <button type="submit">Add Book</button>
       </form>
+      <Link href='/login'>Login</Link>
     </div>
   );
 }
